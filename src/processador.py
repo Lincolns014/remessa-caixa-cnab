@@ -24,6 +24,11 @@ def executar_processamento():
     df_add = df_add[df_add[COLUNA_CPF].notna()]
     df_add[COLUNA_CPF] = df_add[COLUNA_CPF].map(normalizar_cpf)
 
+    # 🔥 REMOVE CPFs EXCLUÍDOS MANUALMENTE (IMPORTANTE)
+    df_add = df_add[
+        ~df_add[COLUNA_CPF].isin(CPFS_EXCLUIR)
+    ]
+
     cpfs_retro = set(df_add[COLUNA_CPF])
 
     # ===============================
@@ -61,7 +66,12 @@ def executar_processamento():
     df_principal = df_principal[df_principal[COLUNA_CPF].notna()]
     df_principal[COLUNA_CPF] = df_principal[COLUNA_CPF].map(normalizar_cpf)
 
-    # 🔥 REMOVE QUEM JÁ ESTÁ NO RETRO
+    # 🔥 REMOVE CPFs EXCLUÍDOS MANUALMENTE
+    df_principal = df_principal[
+        ~df_principal[COLUNA_CPF].isin(CPFS_EXCLUIR)
+    ]
+
+    # 🔥 REMOVE QUEM JÁ ESTÁ NO RETRO (ANTI-DUPLICIDADE)
     df_principal = df_principal[
         ~df_principal[COLUNA_CPF].isin(cpfs_retro)
     ]
