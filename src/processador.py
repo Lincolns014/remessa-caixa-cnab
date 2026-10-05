@@ -18,7 +18,7 @@ def executar_processamento():
 
     df_add = pd.read_excel(
         ARQUIVO_ADICOES,
-        sheet_name="Adições Fala.BR Maio 2026"
+        sheet_name="Retroativos_Outubro_2026"
     )
 
     df_add = df_add[df_add[COLUNA_CPF].notna()]
@@ -36,17 +36,23 @@ def executar_processamento():
     # ===============================
 
     parcelas_retro = [
-        ("01", VALOR_2025),
-        ("02", VALOR_2025),
-        ("03", VALOR_2025),
-        ("04", VALOR_2025),
-        ("05", VALOR_2025),
-        ("06", VALOR_2025),
-        ("07", VALOR_2026),
-        ("08", VALOR_2026),
-        ("09", VALOR_2026),
-        ("10", VALOR_2026),
-        ("11", VALOR_2026),
+        ("01", VALOR_2025),  # Jul/2025
+        ("02", VALOR_2025),  # Ago/2025
+        ("03", VALOR_2025),  # Set/2025
+        ("04", VALOR_2025),  # Out/2025
+        ("05", VALOR_2025),  # Nov/2025
+        ("06", VALOR_2025),  # Dez/2025
+
+        ("07", VALOR_2026),  # Jan/2026
+        ("08", VALOR_2026),  # Fev/2026
+        ("09", VALOR_2026),  # Mar/2026
+        ("10", VALOR_2026),  # Abr/2026
+        ("11", VALOR_2026),  # Mai/2026
+        ("12", VALOR_2026),  # Jun/2026
+        ("13", VALOR_2026),  # Jul/2026
+        ("14", VALOR_2026),  # Ago/2026
+        ("15", VALOR_2026),  # Set/2026
+        ("16", VALOR_2026),  # Out/2026
     ]
 
     for cpf in tqdm(df_add[COLUNA_CPF], desc="Retroativo"):
@@ -58,7 +64,7 @@ def executar_processamento():
             soma_total += valor
 
     # ===============================
-    # LISTA PRINCIPAL (MAIO)
+    # LISTA PRINCIPAL (Outubrobro/2026)
     # ===============================
 
     df_principal = pd.read_excel(ARQUIVO_PRINCIPAL)
@@ -76,11 +82,11 @@ def executar_processamento():
         ~df_principal[COLUNA_CPF].isin(cpfs_retro)
     ]
 
-    for cpf in tqdm(df_principal[COLUNA_CPF], desc="Maio"):
+    for cpf in tqdm(df_principal[COLUNA_CPF], desc="Outubro"):
 
-        linhas.append(detalhe(cpf, codigo, "11", VALOR_2026))
+        linhas.append(detalhe(cpf, codigo, "16", VALOR_2026))
         codigo += 1
         qtd_total += 1
         soma_total += VALOR_2026
 
-    return linhas, qtd_total, soma_total, codigo
+    return linhas, qtd_total, soma_total, codigo, len(df_add), len(df_principal)
