@@ -1,257 +1,299 @@
 
-
 # 💰 Sistema de Geração de Remessa CNAB – CAIXA
 
-Este projeto automatiza a geração de arquivos de remessa no padrão CNAB para envio à CAIXA Econômica Federal, incluindo processamento de parcelas mensais e retroativos com regras de negócio específicas.
+Automação em Python para processamento de dados e geração de arquivos de remessa no padrão CNAB para a CAIXA Econômica Federal.
+
+O projeto foi desenvolvido a partir de um cenário real de processamento de pagamentos em lote, envolvendo tratamento de dados, aplicação de regras de negócio, validações, prevenção de duplicidades e geração automatizada do arquivo de remessa.
 
 ---
 
 ## 🎯 Objetivo
 
-Automatizar o processo de pagamento em lote de beneficiários, garantindo:
+Automatizar o processo de geração de remessas CNAB, reduzindo atividades manuais e aumentando a confiabilidade do processamento.
 
-* Geração correta de arquivos CNAB (Header, Detalhe e Trailer)
-* Pagamento de parcelas mensais (ex: Maio/2026)
-* Cálculo e geração de retroativos (desde Julho/2025)
-* Prevenção de pagamentos duplicados
-* Validação e padronização de CPFs
+O sistema foi desenvolvido para:
+
+- Gerar arquivos CNAB estruturados;
+- Processar parcelas da competência atual;
+- Processar pagamentos retroativos;
+- Aplicar regras de negócio específicas;
+- Evitar pagamentos duplicados;
+- Validar e padronizar identificadores;
+- Processar dados provenientes de planilhas Excel;
+- Gerar um relatório resumido da execução.
 
 ---
 
 ## ⚙️ Funcionalidades
 
-* 📌 Leitura de planilhas Excel com beneficiários
-* 🔄 Processamento separado de:
-* Lista principal (parcela atual)
-* Lista de retroativos (FalaBR)
-* 🚫 Remoção automática de duplicidade entre listas
-* 🧠 Aplicação de regras de negócio por ano:
-* 2025 → R$ 2.277,00
-* 2026 → R$ 2.431,50
-* 📄 Geração de arquivo CNAB estruturado (300 posições)
-* 📊 Relatório final com:
-* Quantidade de registros
-* Valor total
-* Código inicial e final de pagamento
+### 📥 Entrada de dados
+
+- Leitura de planilhas Excel;
+- Tratamento e organização dos dados;
+- Validação das informações necessárias ao processamento;
+- Normalização de identificadores.
+
+### 🔄 Processamento
+
+- Separação entre lista principal e registros retroativos;
+- Aplicação de regras de negócio;
+- Processamento de diferentes competências;
+- Controle dos registros já considerados no processamento;
+- Prevenção de duplicidades entre listas.
+
+### 📄 Geração CNAB
+
+- Geração de Header;
+- Geração de registros de detalhe;
+- Geração de Trailer;
+- Controle sequencial dos registros;
+- Geração do arquivo no padrão CNAB utilizado pelo processo.
+
+### 📊 Relatório
+
+Ao final do processamento, o sistema gera informações de acompanhamento da execução, incluindo:
+
+- quantidade de registros processados;
+- quantidade de registros por grupo de processamento;
+- valor total processado;
+- controle dos códigos utilizados;
+- status da execução.
+
+---
+
+## 🧠 Regras de Negócio
+
+O processamento é dividido em diferentes etapas para permitir maior controle sobre as regras utilizadas.
+
+### ✔ Lista Principal
+
+Processa os registros referentes à competência atual.
+
+### ✔ Retroativos
+
+Processa registros referentes a competências anteriores que precisam ser incluídos na remessa.
+
+### 🚫 Prevenção de Duplicidade
+
+Os registros presentes na lista de retroativos são considerados no controle da lista principal para evitar que o mesmo beneficiário seja processado de forma duplicada.
+
+### 🔒 Tratamento dos Dados
+
+O sistema realiza procedimentos como:
+
+- normalização de CPF;
+- padronização para 11 dígitos;
+- tratamento de valores nulos;
+- validação das informações utilizadas no processamento.
+
+As regras financeiras e os dados utilizados no ambiente real não são disponibilizados neste repositório público.
 
 ---
 
 ## 🏗️ Estrutura do Projeto
 
-<pre class="overflow-visible! px-0!" data-start="1773" data-end="2236"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>remessa_caixa/</span><br/><span>│</span><br/><span>├── data/</span><br/><span>│   └── entrada/          </span><span class="ͼl"># Arquivos Excel de entrada</span><br/><span>│</span><br/><span>├── outputs/              </span><span class="ͼl"># Arquivos CNAB gerados</span><br/><span>│</span><br/><span>├── src/</span><br/><span>│   ├── config.py         </span><span class="ͼl"># Configurações do sistema</span><br/><span>│   ├── utils.py          </span><span class="ͼl"># Funções auxiliares (ex: CPF)</span><br/><span>│   ├── cnab.py           </span><span class="ͼl"># Geração CNAB (Header, Detalhe, Trailer)</span><br/><span>│   ├── processador.py    </span><span class="ͼl"># Regras de negócio</span><br/><span>│</span><br/><span>├── main.py               </span><span class="ͼl"># Execução principal</span><br/><span>├── requirements.txt</span><br/><span>└── README.md</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```text
+remessa-caixa-cnab/
+│
+├── data/
+│   └── # Arquivos de entrada não versionados
+│
+├── outputs/
+│   └── # Arquivos gerados não versionados
+│
+├── src/
+│   ├── config.py
+│   ├── utils.py
+│   ├── cnab.py
+│   └── processador.py
+│
+├── main.py
+├── .gitignore
+└── README.md
+```
+
+### Responsabilidade dos módulos
+
+| Arquivo            | Responsabilidade                                             |
+| ------------------ | ------------------------------------------------------------ |
+| `main.py`        | Orquestração da execução do sistema                      |
+| `processador.py` | Processamento dos dados e aplicação das regras de negócio |
+| `cnab.py`        | Construção dos registros CNAB                              |
+| `config.py`      | Configurações e parâmetros do sistema                     |
+| `utils.py`       | Funções auxiliares e tratamento dos dados                  |
 
 ---
 
-## 🚀 Como Executar
+## 🔄 Fluxo do Processamento
 
-### 1. Instalar dependências
-
-<pre class="overflow-visible! px-0!" data-start="2294" data-end="2338"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>pip install pandas openpyxl tqdm</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-### 2. Organizar arquivos
-
-Coloque os arquivos de entrada em:
-
-<pre class="overflow-visible! px-0!" data-start="2408" data-end="2429"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>data/entrada/</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
-Exemplo:
-
-<pre class="overflow-visible! px-0!" data-start="2441" data-end="2517"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>data/entrada/Maio_2026.xlsx</span><br/><span>data/entrada/Retroativos_julho_2025.xlsx</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-### 3. Executar o sistema
-
-<pre class="overflow-visible! px-0!" data-start="2551" data-end="2577"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>python main.py</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-### 4. Resultado
-
-O arquivo será gerado em:
-
-<pre class="overflow-visible! px-0!" data-start="2629" data-end="2666"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>outputs/remessa_maio_2026.txt</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-## 🧠 Regras de Negócio
-
-### ✔ Lista Principal
-
-* Paga apenas a parcela do mês atual (ex: Maio/2026)
-
----
-
-### ✔ Retroativos
-
-Pagamentos retroativos desde:
-
-* Julho/2025 até Maio/2026
-
-Valores aplicados:
-
-| Ano  | Valor       |
-| ---- | ----------- |
-| 2025 | R$ 2.277,00 |
-| 2026 | R$ 2.431,50 |
-
----
-
-### 🚫 Prevenção de Duplicidade
-
-* CPFs presentes na lista de retroativos são removidos da lista principal
-* Evita pagamento duplicado
-
----
-
-### 🔒 Tratamento de Dados
-
-* Normalização de CPF
-* Remoção de valores nulos
-* Padronização para 11 dígitos
-
----
-
-## 📊 Exemplo de Saída
-
-<pre class="overflow-visible! px-0!" data-start="3266" data-end="3398"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>✅ REMESSA GERADA COM SUCESSO</span><br/><br/><span>Registros: </span><span class="ͼq">21500</span><br/><span>Valor total: R</span><span class="ͼt">$ 52</span><span>.000.000,00</span><br/><span>Código inicial: </span><span class="ͼq">197894</span><br/><span>Código final: </span><span class="ͼq">220394</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```text
+                 Arquivos Excel
+                       │
+                       ▼
+                Leitura dos dados
+                       │
+                       ▼
+             Tratamento e validação
+                       │
+                       ▼
+              Aplicação das regras
+                  de negócio
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+        Lista Principal     Retroativos
+              │                 │
+              └────────┬────────┘
+                       ▼
+             Controle de duplicidade
+                       │
+                       ▼
+              Geração dos registros
+                    CNAB
+                       │
+             ┌─────────┼─────────┐
+             ▼         ▼         ▼
+           Header   Detalhes   Trailer
+                       │
+                       ▼
+                Arquivo de Remessa
+                       │
+                       ▼
+                  Relatório
+```
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-* Python 3.12
-* Pandas
-* OpenPyXL
-* TQDM
-
----
-
-## 💼 Aplicação Real
-
-Este projeto foi desenvolvido para um cenário real de processamento de pagamentos em lote, com regras específicas de negócio e integração com padrão bancário CNAB da CAIXA.
-
----
-
-## 📌 Próximas Melhorias
-
-* Validação automática de arquivos Excel
-* Relatório detalhado em Excel
-* Integração com retorno CNAB
-* Interface via linha de comando (CLI)
-
----
-
-## 👨‍💻 Autor
-
-**Lincoln Rocha**
+- **Python 3.12**
+- **Pandas**
+- **OpenPyXL**
+- **TQDM**
+- **Git**
+- **GitHub**
+- **CNAB**
 
 ---
 
 ## 🚀 Como Executar
 
-### 1. Instalar dependências
+### 1. Clonar o repositório
 
-<pre class="overflow-visible! px-0!" data-start="1870" data-end="1914"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>pip install pandas openpyxl tqdm</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```bash
+git clone https://github.com/Lincolns014/remessa-caixa-cnab.git
+```
 
----
+### 2. Acessar o projeto
 
-### 2. Organizar arquivos
+```bash
+cd remessa-caixa-cnab
+```
 
-Coloque os arquivos de entrada em:
+### 3. Instalar as dependências
 
-<pre class="overflow-visible! px-0!" data-start="1984" data-end="2005"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>data/entrada/</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+```bash
+pip install pandas openpyxl tqdm
+```
 
-Exemplo:
+### 4. Organizar os arquivos de entrada
 
-<pre class="overflow-visible! px-0!" data-start="2017" data-end="2093"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>data/entrada/Maio_2026.xlsx</span><br/><span>data/entrada/Retroativos_julho_2025.xlsx</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+Os arquivos de entrada devem ser disponibilizados localmente na estrutura utilizada pelo projeto.
 
----
+```text
+data/
+```
 
-### 3. Executar o sistema
+> Os arquivos utilizados no ambiente real não fazem parte deste repositório público.
 
-<pre class="overflow-visible! px-0!" data-start="2127" data-end="2153"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>python main.py</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
+### 5. Executar o sistema
 
----
+```bash
+python main.py
+```
 
-### 4. Resultado
-
-O arquivo será gerado em:
-
-<pre class="overflow-visible! px-0!" data-start="2205" data-end="2242"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute end-1.5 top-1 z-2 md:end-2 md:top-1"></div><div class="relative"><div class="pe-11 pt-3"><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>outputs/remessa_maio_2026.txt</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-## 🧠 Regras de Negócio
-
-### ✔ Lista Principal
-
-* Paga apenas a parcela do mês atual (ex: Maio/2026)
+Após a execução, o sistema gera o arquivo de remessa e o relatório correspondente no ambiente local.
 
 ---
 
-### ✔ Retroativos
+## 🔒 Tratamento de Dados
 
-Pagamentos retroativos desde:
+Este projeto foi desenvolvido em um cenário real de processamento de pagamentos e pode envolver informações pessoais e operacionais.
 
-* Julho/2025 até Maio/2026
+Por esse motivo, dados reais não são disponibilizados neste repositório público.
 
-Valores aplicados:
+Não fazem parte do repositório:
 
-| Ano  | Valor       |
-| ---- | ----------- |
-| 2025 | R$ 2.277,00 |
-| 2026 | R$ 2.431,50 |
+- planilhas com dados reais;
+- CPFs;
+- arquivos CNAB reais;
+- relatórios operacionais;
+- informações financeiras;
+- credenciais;
+- configurações sensíveis.
 
----
-
-### 🚫 Prevenção de Duplicidade
-
-* CPFs presentes na lista de retroativos são removidos da lista principal
-* Evita pagamento duplicado
-
----
-
-### 🔒 Tratamento de Dados
-
-* Normalização de CPF
-* Remoção de valores nulos
-* Padronização para 11 dígitos
-
----
-
-## 📊 Exemplo de Saída
-
-<pre class="overflow-visible! px-0!" data-start="2842" data-end="2974"><div class="relative w-full mt-4 mb-1"><div class=""><div class="relative"><div class="h-full min-h-0 min-w-0"><div class="h-full min-h-0 min-w-0"><div class="border border-token-border-light border-radius-3xl corner-superellipse/1.1 rounded-3xl"><div class="h-full w-full border-radius-3xl bg-token-bg-elevated-secondary corner-superellipse/1.1 overflow-clip rounded-3xl lxnfua_clipPathFallback"><div class="pointer-events-none absolute inset-x-4 top-12 bottom-4"><div class="pointer-events-none sticky z-40 shrink-0 z-1!"><div class="sticky bg-token-border-light"></div></div></div><div class="relative"><div class=""><div class="relative z-0 flex max-w-full"><div id="code-block-viewer" dir="ltr" class="q9tKkq_viewer cm-editor z-10 light:cm-light dark:cm-light flex h-full w-full flex-col items-stretch ͼk ͼy"><div class="cm-scroller"><div class="cm-content q9tKkq_readonly"><span>✅ REMESSA GERADA COM SUCESSO</span><br/><br/><span>Registros: </span><span class="ͼq">21500</span><br/><span>Valor total: R</span><span class="ͼt">$ 52</span><span>.000.000,00</span><br/><span>Código inicial: </span><span class="ͼq">197894</span><br/><span>Código final: </span><span class="ͼq">220394</span></div></div></div></div></div></div></div></div></div></div><div class=""><div class=""></div></div></div></div></div></pre>
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-* Python 3.12
-* Pandas
-* OpenPyXL
-* TQDM
+O arquivo `.gitignore` é utilizado para impedir o versionamento desses arquivos.
 
 ---
 
 ## 💼 Aplicação Real
 
-Este projeto foi desenvolvido para um cenário real de processamento de pagamentos em lote, com regras específicas de negócio e integração com padrão bancário CNAB da CAIXA.
+O projeto foi desenvolvido para automatizar uma rotina real de processamento de pagamentos em lote.
+
+A solução combina:
+
+- automação de processos;
+- tratamento de dados;
+- regras de negócio;
+- geração de arquivos estruturados;
+- validações;
+- controle de duplicidade;
+- geração de relatórios.
+
+O objetivo é reduzir tarefas manuais, diminuir riscos de inconsistência e aumentar a confiabilidade do processo.
 
 ---
 
-## 📌 Próximas Melhorias
+## 📊 Competências Demonstradas
 
-* Validação automática de arquivos Excel
-* Relatório detalhado em Excel
-* Integração com retorno CNAB
-* Interface via linha de comando (CLI)
+Este projeto envolve conhecimentos relacionados a:
+
+- 🐍 Python
+- 📊 Pandas
+- 🔄 ETL
+- 🧹 Tratamento de dados
+- 🧠 Regras de negócio
+- 🔎 Validação de dados
+- 🚫 Controle de duplicidade
+- 📄 Processamento de arquivos
+- 🏦 Padrão CNAB
+- ⚙️ Automação de processos
+- 📈 Geração de relatórios
+- 🗂️ Organização de projetos Python
+- 🔧 Git e GitHub
+
+---
+
+## 🔮 Próximos Passos
+
+Possíveis evoluções do projeto:
+
+- [ ] Testes automatizados;
+- [ ] Logging estruturado;
+- [ ] Validação mais abrangente dos arquivos de entrada;
+- [ ] Configuração externa dos parâmetros;
+- [ ] Geração de relatórios em Excel;
+- [ ] Integração com arquivos de retorno CNAB;
+- [ ] Persistência das informações em banco de dados;
+- [ ] Monitoramento do processamento;
+- [ ] Integração com ferramentas de orquestração.
 
 ---
 
 ## 👨‍💻 Autor
 
-**Lincoln Rocha**
+**Lincolns Rocha**
+
+Python | Data Analysis | Automation | ETL | Data Engineering
+
+🔗 [GitHub](https://github.com/Lincolns014)
